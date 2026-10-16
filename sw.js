@@ -1,5 +1,5 @@
 // Service worker: deixa o app funcionar sem internet depois da primeira visita.
-const VERSAO = 'ti-v2';
+const VERSAO = 'ti-v3';
 const ARQUIVOS = [
   './', 'index.html', 'css/style.css', 'js/texto.js', 'js/pdf.js', 'js/app.js',
   'vendor/jspdf.umd.min.js', 'vendor/JsBarcode.all.min.js',

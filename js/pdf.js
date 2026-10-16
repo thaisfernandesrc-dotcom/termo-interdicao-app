@@ -44,7 +44,7 @@
   async function gerarPDF(d) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
-    const tx = T.textos(d.tipoTermo);
+    const tx = T.textos(d.tipoTermo, (d.objetos || []).length);
     const numFmt = T.fmtNumero(d.numero);
     // Sem número informado, o "Nº" fica em branco: o número é atribuído depois.
     const titulo = tx.nome + ' Nº ' + (numFmt || '______________');
@@ -127,7 +127,7 @@
     (d.objetos || []).forEach((o, i) => {
       garantir(60);
       fonte(doc, true, BODY);
-      doc.text('OBJETO: ' + (i + 1) + ' - ' + o.tipo + ' - Paralisação: ' + o.paralisacao, MX, st.y);
+      doc.text('OBJETO: ' + (d.objetos.length > 1 ? (i + 1) + ' - ' : '') + o.tipo + ' - Paralisação: ' + o.paralisacao, MX, st.y);
       st.y += 15.5;
       paragrafo(o.descricao || '');
       st.y += 28;

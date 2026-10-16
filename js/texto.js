@@ -57,12 +57,13 @@ window.TERMO = (function () {
     embargo: ['Obra', 'Frente de Serviço'],
   };
 
-  function textos(tipo) {
+  function textos(tipo, qtd) {
     const emb = tipo === 'embargo';
     const f = emb ? paraEmbargo : (x) => x;
     return {
       nome: emb ? 'TERMO DE EMBARGO' : 'TERMO DE INTERDIÇÃO',
-      fundamento: f(FUNDAMENTO),
+      // Com um único objeto o termo fica no singular (confirmado em termo real).
+      fundamento: f(qtd === 1 ? FUNDAMENTO.replace('dos objetos abaixo descritos', 'do objeto abaixo descrito') : FUNDAMENTO),
       paragrafos: PARAGRAFOS.map((p) => (p === '@PROTOCOLO' ? p : f(p))),
       aviso: f(AVISO_PENAL),
       tipos: TIPOS[emb ? 'embargo' : 'interdicao'],

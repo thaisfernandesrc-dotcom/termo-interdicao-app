@@ -132,9 +132,9 @@
   }
 
   function previa(d) {
-    const tx = T.textos(d.tipoTermo);
+    const tx = T.textos(d.tipoTermo, d.objetos.length);
     const objs = d.objetos.map((o, i) =>
-      '<div class="obj">OBJETO: ' + (i + 1) + ' - ' + esc(o.tipo) + ' - Paralisação: ' + esc(o.paralisacao) + '</div><p>' + esc(o.descricao) + '</p>').join('');
+      '<div class="obj">OBJETO: ' + (d.objetos.length > 1 ? (i + 1) + ' - ' : '') + esc(o.tipo) + ' - Paralisação: ' + esc(o.paralisacao) + '</div><p>' + esc(o.descricao) + '</p>').join('');
     $('#previa').innerHTML =
       '<div class="inst"><img src="assets/brasao.png" alt=""><div><b>Ministério do Trabalho e Emprego</b><b style="font-size:11px">Secretaria de Inspeção do Trabalho</b>' +
       '<span style="font-size:11px">' + esc(d.unidade1) + '<br>' + esc(d.unidade2) + '</span></div></div>' +
