@@ -195,7 +195,24 @@
     } else { toast('Este navegador não compartilha arquivos: use Baixar.'); }
   };
 
+  // ---------- APK Android: salvar/compartilhar/abrir pelo sistema ----------
+  if (window.Android && window.Android.salvar) {
+    const nativo = (modo) => {
+      if (!pdfBlob) return;
+      const r = new FileReader();
+      r.onload = () => {
+        const res = window.Android.salvar(String(r.result).split(',')[1], pdfNome, modo);
+        if (res !== 'ok') toast('Erro: ' + res);
+        else if (modo === 0) toast('PDF salvo em Downloads/Termos');
+      };
+      r.readAsDataURL(pdfBlob);
+    };
+    $('#baixar').onclick = () => nativo(0);
+    $('#compartilhar').onclick = () => nativo(1);
+    $('#abrir').onclick = () => nativo(2);
+  }
+
   // ---------- Início ----------
   aplicarPerfil(); carregarRascunho();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if (!window.Android && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();

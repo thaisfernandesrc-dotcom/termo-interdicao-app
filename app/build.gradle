@@ -1,0 +1,41 @@
+plugins { id "com.android.application" }
+
+// +1: o primeiro APK (gerado fora do GitHub) já usou a versão 1.
+def runNumber = ((System.getenv("GITHUB_RUN_NUMBER") ?: "1") as Integer) + 1
+
+android {
+    namespace "br.aft.termo"
+    compileSdk 34
+    defaultConfig {
+        applicationId "br.aft.termo"
+        minSdk 29
+        targetSdk 34
+        versionCode runNumber
+        versionName "1.0." + runNumber
+    }
+    // A chave de assinatura NÃO fica no repositório: o workflow a recria a partir
+    // dos segredos KEYSTORE_BASE64 e KEYSTORE_PASSWORD do GitHub.
+    signingConfigs {
+        termo {
+            storeFile file("termo.keystore")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias "termo"
+            keyPassword System.getenv("KEYSTORE_PASSWORD")
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.termo
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core:1.13.1"
+    implementation "androidx.webkit:webkit:1.11.0"
+}

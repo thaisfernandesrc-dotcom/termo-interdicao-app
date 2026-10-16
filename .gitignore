@@ -1,3 +1,9 @@
 .DS_Store
 Thumbs.db
 *.pdf
+build/
+.gradle/
+local.properties
+app/src/main/assets/
+*.keystore
+*.jks

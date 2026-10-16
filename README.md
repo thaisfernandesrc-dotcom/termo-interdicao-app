@@ -14,6 +14,16 @@ PDF no mesmo layout do termo do Sistema Auditor, com campo para o empregador **a
 4. Confira o texto, entregue o celular ao empregador, que preenche o recibo e assina no quadro. Toque em **Gerar PDF**
    e use **Compartilhar** (WhatsApp, e-mail...) ou **Baixar**.
 
+## APK para Android
+
+A cada envio para a branch `main`, o GitHub Actions (`.github/workflows/apk.yml`) copia o app web para dentro de um
+projeto Android (`app/`), compila e publica o arquivo `interdicao-embargo.apk` em **Releases** (Android 10 ou superior).
+No APK, **Baixar** salva o PDF em `Downloads/Termos`, e **Compartilhar** e **Abrir** usam os apps do celular.
+
+A chave de assinatura **não** fica no repositório. Ela é lida de dois segredos em
+**Settings → Secrets and variables → Actions**: `KEYSTORE_BASE64` (o arquivo da chave em base64) e
+`KEYSTORE_PASSWORD`. Guarde uma cópia da chave: sem ela, versões novas não instalam por cima da antiga.
+
 ## Privacidade
 
 Nada sai do aparelho: não há servidor, conta nem envio de dados. Dados e rubrica ficam no armazenamento local do
