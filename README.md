@@ -1,4 +1,4 @@
-# Termo de Interdição (app de celular)
+# Interdição e Embargo Mobile
 
 Aplicativo web instalável (PWA) para preencher, no celular, os dados de um **Termo de Interdição ou de Embargo** e gerar o
 PDF no mesmo layout do termo do Sistema Auditor, com campo para o empregador **assinar ou rubricar com o dedo**.
