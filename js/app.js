@@ -62,7 +62,7 @@
   // ---------- Termo ----------
   const termoForm = $('#termoForm');
   let objetos = [];
-  const CAMPOS = ['numero', 'empregador', 'cnpj', 'cnae', 'endereco', 'municipio', 'uf', 'cep', 'fantasia', 'data', 'aut', 'codDownload'];
+  const CAMPOS = ['tipoTermo', 'numero', 'empregador', 'cnpj', 'cnae', 'endereco', 'municipio', 'uf', 'cep', 'fantasia', 'data', 'aut', 'codDownload'];
   const MASCARAS = { cnpj: T.fmtCnpj, cep: T.fmtCep, cnae: T.fmtCnae, numero: T.fmtNumero };
 
   function salvarRascunho() {
@@ -70,6 +70,10 @@
     CAMPOS.forEach((k) => { r[k] = termoForm.elements[k].value; });
     gravar(LS_RASCUNHO, r);
   }
+  termoForm.elements.tipoTermo.addEventListener('change', () => {
+    const ok = tiposAtuais(); objetos.forEach((o) => { if (!ok.includes(o.tipo)) o.tipo = ok[0]; });
+    renderObjetos(); salvarRascunho();
+  });
   termoForm.addEventListener('input', (e) => {
     const f = MASCARAS[e.target.name];
     if (f) e.target.value = f(e.target.value);
@@ -77,13 +81,14 @@
     salvarRascunho();
   });
 
+  const tiposAtuais = () => T.textos(termoForm.elements.tipoTermo.value).tipos;
   function renderObjetos() {
     const box = $('#listaObjetos'); box.innerHTML = '';
     objetos.forEach((o, i) => {
       const div = document.createElement('div'); div.className = 'objeto';
       div.innerHTML =
         '<header><span>Objeto ' + (i + 1) + '</span>' + (objetos.length > 1 ? '<button type="button" class="sec perigo">Remover</button>' : '') + '</header>' +
-        '<div class="duas"><label>Tipo<select data-k="tipo">' + T.TIPOS_OBJETO.map((t) => '<option' + (t === o.tipo ? ' selected' : '') + '>' + t + '</option>').join('') + '</select></label>' +
+        '<div class="duas"><label>Tipo<select data-k="tipo">' + tiposAtuais().map((t) => '<option' + (t === o.tipo ? ' selected' : '') + '>' + t + '</option>').join('') + '</select></label>' +
         '<label>Paralisação<select data-k="paralisacao"><option' + (o.paralisacao === 'TOTAL' ? ' selected' : '') + '>TOTAL</option><option' + (o.paralisacao === 'PARCIAL' ? ' selected' : '') + '>PARCIAL</option></select></label></div>' +
         '<label>Descrição<textarea rows="3" data-k="descricao" placeholder="Ex.: Batedeira industrial, fabricante ..., modelo ..., localizada no setor ... do estabelecimento.">' + esc(o.descricao) + '</textarea></label>';
       div.addEventListener('input', (e) => { if (e.target.dataset.k) { o[e.target.dataset.k] = e.target.value; salvarRascunho(); } });
@@ -92,12 +97,13 @@
       box.appendChild(div);
     });
   }
-  const novoObjeto = () => ({ tipo: T.TIPOS_OBJETO[0], paralisacao: 'TOTAL', descricao: '' });
+  const novoObjeto = () => ({ tipo: tiposAtuais()[0], paralisacao: 'TOTAL', descricao: '' });
   $('#addObjeto').onclick = () => { objetos.push(novoObjeto()); renderObjetos(); salvarRascunho(); };
 
   function carregarRascunho() {
     const r = ler(LS_RASCUNHO, {});
     CAMPOS.forEach((k) => { termoForm.elements[k].value = r[k] || ''; });
+    if (!termoForm.elements.tipoTermo.value) termoForm.elements.tipoTermo.value = 'interdicao';
     if (!termoForm.elements.data.value) termoForm.elements.data.value = isoHoje();
     objetos = (r.objetos && r.objetos.length) ? r.objetos : [novoObjeto()];
     renderObjetos();
@@ -113,7 +119,7 @@
     return {
       unidade1: perfil.unidade1 || '', unidade2: perfil.unidade2 || '', protocolo: perfil.protocolo || '',
       localData: perfil.localData || '', aftNome: perfil.aftNome || '', aftCif: perfil.aftCif || '', aftRubrica: perfil.rubrica || null,
-      numero: v('numero'), empregador: v('empregador'), cnpj: v('cnpj'), cnae: v('cnae'), endereco: v('endereco'),
+      tipoTermo: v('tipoTermo') || 'interdicao', numero: v('numero'), empregador: v('empregador'), cnpj: v('cnpj'), cnae: v('cnae'), endereco: v('endereco'),
       municipio: v('municipio'), uf: v('uf'), cep: v('cep'), fantasia: v('fantasia'),
       data: T.isoParaBR(v('data')) || T.hojeBR(), aut: v('aut'), codDownload: v('codDownload'),
       objetos: objetos.map((o) => ({ tipo: o.tipo, paralisacao: o.paralisacao, descricao: (o.descricao || '').trim() })),
@@ -126,25 +132,25 @@
   }
 
   function previa(d) {
+    const tx = T.textos(d.tipoTermo);
     const objs = d.objetos.map((o, i) =>
       '<div class="obj">OBJETO: ' + (i + 1) + ' - ' + esc(o.tipo) + ' - Paralisação: ' + esc(o.paralisacao) + '</div><p>' + esc(o.descricao) + '</p>').join('');
     $('#previa').innerHTML =
       '<div class="inst"><img src="assets/brasao.png" alt=""><div><b>Ministério do Trabalho e Emprego</b><b style="font-size:11px">Secretaria de Inspeção do Trabalho</b>' +
       '<span style="font-size:11px">' + esc(d.unidade1) + '<br>' + esc(d.unidade2) + '</span></div></div>' +
-      '<div class="tit">TERMO DE INTERDIÇÃO Nº ' + esc(T.fmtNumero(d.numero)) + '</div>' +
+      '<div class="tit">' + esc(tx.nome) + ' Nº ' + esc(T.fmtNumero(d.numero) || '______________') + '</div>' +
       '<p class="campo"><b>EMPREGADOR:</b> ' + esc(d.empregador) + '<br><b>CNPJ:</b> ' + esc(d.cnpj) + ' &nbsp; <b>CNAE:</b> ' + esc(d.cnae) +
       '<br><b>Endereço:</b> ' + esc(d.endereco) + '<br><b>Município:</b> ' + esc(d.municipio) + ' &nbsp; <b>UF:</b> ' + esc(d.uf) + ' &nbsp; <b>CEP:</b> ' + esc(d.cep) +
       '<br><b>Nome de Fantasia:</b> ' + esc(d.fantasia) + '</p>' +
-      '<p>' + esc(T.FUNDAMENTO) + '</p>' + objs + T.paragrafos(d).map((p) => '<p>' + esc(p) + '</p>').join('') +
+      '<p>' + esc(tx.fundamento) + '</p>' + objs + T.paragrafos(d).map((p) => '<p>' + esc(p) + '</p>').join('') +
       '<div class="ass">' + esc((d.localData ? d.localData + ', ' : '') + d.data) + '.<br><br>' + esc(d.aftNome) + '<br>Auditor-Fiscal do Trabalho<br>CIF ' + esc(d.aftCif) + '</div>' +
-      '<div class="caixa">' + esc(T.AVISO_PENAL) + '</div>';
+      '<div class="caixa">' + esc(tx.aviso) + '</div>';
   }
 
   $('#gerar').onclick = () => {
     salvarPerfil(); salvarRascunho();
     const d = dadosTermo(), faltas = [];
     if (!d.empregador) faltas.push('Empregador');
-    if (!d.numero) faltas.push('Nº do Termo');
     if (!d.aftNome || !d.aftCif) faltas.push('Meus dados (nome e CIF)');
     if (d.objetos.some((o) => !o.descricao)) faltas.push('Descrição de cada objeto');
     if (faltas.length) { toast('Falta preencher: ' + faltas.join(', ')); if (!d.aftNome || !d.aftCif) $('#perfilBox').open = true; return; }
@@ -170,7 +176,7 @@
         empCpf: rf.empCpf.value.trim(), empFuncao: rf.empFuncao.value.trim(), empAssinatura: assinatura,
       });
       pdfBlob = await window.gerarPDF(d);
-      pdfNome = 'Termo_Interdicao_' + (T.dig(d.numero) || 'sem-numero') + '.pdf';
+      pdfNome = (d.tipoTermo === 'embargo' ? 'Termo_Embargo_' : 'Termo_Interdicao_') + (T.dig(d.numero) || d.data.replace(/\//g, '-')) + '.pdf';
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
       pdfUrl = URL.createObjectURL(pdfBlob);
       $('#resNome').textContent = pdfNome + ' (' + Math.round(pdfBlob.size / 1024) + ' KB)';

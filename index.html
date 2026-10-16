@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#1b3a6b">
-  <title>Termo de Interdição</title>
+  <title>Termo de Interdição e Embargo</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon-192.png">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="topo"><img src="assets/brasao.png" alt="" width="32" height="32"><h1>Termo de Interdição</h1></header>
+  <header class="topo"><img src="assets/brasao.png" alt="" width="32" height="32"><h1>Interdição / Embargo</h1></header>
 
   <!-- ETAPA 1: dados do termo -->
   <main id="etapa1">
@@ -35,8 +35,9 @@
     </details>
 
     <form id="termoForm" class="cartao" autocomplete="off">
-      <h2>Empregador</h2>
-      <label>Nº do Termo<input name="numero" inputmode="numeric" placeholder="4.202.168-5"></label>
+      <label>Tipo de termo<select name="tipoTermo"><option value="interdicao">Interdição</option><option value="embargo">Embargo</option></select></label>
+      <h2 style="margin-top:14px">Empregador</h2>
+      <label>Nº do Termo (deixe em branco: o número vem depois)<input name="numero" inputmode="numeric" placeholder="opcional"></label>
       <label>Empregador<input name="empregador" required></label>
       <div class="duas">
         <label>CNPJ<input name="cnpj" inputmode="numeric" placeholder="00.000.000/0000-00"></label>
@@ -59,7 +60,7 @@
     </form>
 
     <section class="cartao">
-      <h2>Objetos da interdição</h2>
+      <h2>Objetos</h2>
       <div id="listaObjetos"></div>
       <button type="button" id="addObjeto" class="sec">+ Adicionar objeto</button>
     </section>

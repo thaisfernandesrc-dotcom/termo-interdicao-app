@@ -44,9 +44,11 @@
   async function gerarPDF(d) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
+    const tx = T.textos(d.tipoTermo);
     const numFmt = T.fmtNumero(d.numero);
-    const titulo = 'TERMO DE INTERDIÇÃO Nº ' + numFmt;
-    doc.setProperties({ title: titulo, subject: 'Termo de Interdição', creator: 'App Termo de Interdição' });
+    // Sem número informado, o "Nº" fica em branco: o número é atribuído depois.
+    const titulo = tx.nome + ' Nº ' + (numFmt || '______________');
+    doc.setProperties({ title: titulo, subject: tx.nome, creator: 'App Termo de Interdição' });
 
     const st = { y: 0 };
     const marcaDagua = (texto, x, y, size) => {
@@ -119,7 +121,7 @@
       st.y -= LH; // deixa st.y na linha base da última linha impressa
     };
 
-    paragrafo(T.FUNDAMENTO);
+    paragrafo(tx.fundamento);
     st.y += 29;
 
     (d.objetos || []).forEach((o, i) => {
@@ -135,7 +137,7 @@
     T.paragrafos(d).forEach((p) => { paragrafo(p); st.y += LH; });
 
     // ---------- Bloco de assinaturas (altura ~ 215 pt) ----------
-    const lAviso = (fonte(doc, false, BODY), doc.splitTextToSize(T.AVISO_PENAL, W - 2));
+    const lAviso = (fonte(doc, false, BODY), doc.splitTextToSize(tx.aviso, W - 2));
     const alturaBloco = 150 + lAviso.length * LH + 6;
     let oy;
     if (st.y + 30 + alturaBloco <= BOTTOM + 14) oy = st.y + 30;

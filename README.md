@@ -1,6 +1,6 @@
 # Termo de Interdição (app de celular)
 
-Aplicativo web instalável (PWA) para preencher, no celular, os dados de um **Termo de Interdição** e gerar o
+Aplicativo web instalável (PWA) para preencher, no celular, os dados de um **Termo de Interdição ou de Embargo** e gerar o
 PDF no mesmo layout do termo do Sistema Auditor, com campo para o empregador **assinar ou rubricar com o dedo**.
 
 ## Como usar
@@ -25,7 +25,8 @@ navegador. O repositório não contém dado de empresa, trabalhador ou auditor.
   modelo vigente antes de usar em ação fiscal.
 - Os campos **Aut.** e **Cód. Download** são opcionais e só aparecem no PDF se você os digitar; o app não os gera.
 - A fonte do PDF é Helvetica (a Tahoma do modelo é proprietária); posições, tamanhos e linhas seguem o modelo.
-- O número do termo e as informações vêm do que for digitado: este app **não substitui** o Sistema Auditor.
+- O número do termo é opcional: em branco, o PDF sai com "Nº ______" e sem código de barras (o número vem depois).
+- O texto do **Embargo** foi derivado do texto de interdição (troca de "interdição" por "embargo"); confira com um Termo de Embargo oficial. Este app **não substitui** o Sistema Auditor.
 
 ## Estrutura
 

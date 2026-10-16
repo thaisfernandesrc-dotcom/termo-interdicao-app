@@ -40,13 +40,40 @@ window.TERMO = (function () {
     'Brasileiro, sem prejuízo das demais sanções cabíveis, quem ordenar ou permitir a realização ou ' +
     'continuação da referida operação ou atividade após a presente determinação de INTERDIÇÃO.';
 
-  const TIPOS_OBJETO = ['Máquina/Equipamento', 'Setor de Serviço', 'Estabelecimento'];
+  // Embargo: derivado do texto de interdição, trocando apenas os termos que mudam.
+  // CONFERIR com um Termo de Embargo oficial do Sistema Auditor.
+  const paraEmbargo = (t) => t
+    .replace('fica determinada a INTERDIÇÃO dos objetos', 'fica determinado o EMBARGO dos objetos')
+    .replace('decorrência da interdição', 'decorrência do embargo')
+    .replace('recorrer da interdição imposta', 'recorrer do embargo imposto')
+    .replace('levantamento da interdição', 'levantamento do embargo')
+    .replace('Durante a vigência da interdição', 'Durante a vigência do embargo')
+    .replace('referentes à interdição imposta', 'referentes ao embargo imposto')
+    .replace('Levantamento de Interdição', 'Levantamento de Embargo')
+    .replace('determinação de INTERDIÇÃO', 'determinação de EMBARGO');
+
+  const TIPOS = {
+    interdicao: ['Máquina/Equipamento', 'Setor de Serviço', 'Estabelecimento'],
+    embargo: ['Obra', 'Frente de Serviço'],
+  };
+
+  function textos(tipo) {
+    const emb = tipo === 'embargo';
+    const f = emb ? paraEmbargo : (x) => x;
+    return {
+      nome: emb ? 'TERMO DE EMBARGO' : 'TERMO DE INTERDIÇÃO',
+      fundamento: f(FUNDAMENTO),
+      paragrafos: PARAGRAFOS.map((p) => (p === '@PROTOCOLO' ? p : f(p))),
+      aviso: f(AVISO_PENAL),
+      tipos: TIPOS[emb ? 'embargo' : 'interdicao'],
+    };
+  }
 
   const dig = (s) => String(s || '').replace(/\D/g, '');
 
   function paragrafos(d) {
     const out = [];
-    PARAGRAFOS.forEach((p) => {
+    textos(d.tipoTermo).paragrafos.forEach((p) => {
       if (p === '@PROTOCOLO') {
         if (d.protocolo && d.protocolo.trim())
           out.push('Podem, ainda, ser protocolizados no seguinte endereço: ' + d.protocolo.trim());
@@ -56,7 +83,7 @@ window.TERMO = (function () {
   }
 
   return {
-    FUNDAMENTO, PARAGRAFOS, AVISO_PENAL, TIPOS_OBJETO, paragrafos,
+    textos, paragrafos,
     dig,
     fmtNumero(v) {
       const d = dig(v);
