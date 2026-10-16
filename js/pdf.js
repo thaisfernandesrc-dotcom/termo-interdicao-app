@@ -175,7 +175,7 @@
     fonte(doc, false, BODY);
     doc.text((d.localData ? d.localData + ', ' : '') + (d.data || '') + '.', 275, oy);
     // assinatura do AFT (opcional), centralizada sobre a linha
-    rubrica(doc, await recortar(d.aftRubrica), 403.5, oy + 21, 130, 20);
+    rubrica(doc, await recortar(d.aftRubrica), 403.5, oy + 21, 80, 13);
     doc.setLineWidth(0.8); doc.setDrawColor(0);
     doc.line(290, oy + 23, 517, oy + 23);
     doc.text(d.aftNome || '', 403.5, oy + 34, { align: 'center' });
@@ -185,7 +185,7 @@
     // recibo do empregador
     doc.text('Recebi em:', MX, oy + 50);
     doc.text(d.recebiEm || '____/_____/______', 134, oy + 50);
-    rubrica(doc, await recortar(d.empAssinatura), 174, oy + 67, 120, 32); // centro da linha (77..271)
+    rubrica(doc, await recortar(d.empAssinatura), 174, oy + 67, 70, 20); // centro da linha (77..271)
     doc.line(77, oy + 69, 271, oy + 69);
     doc.text('Assinatura do Empregador/Preposto:', 97, oy + 82);
 
