@@ -1,0 +1,60 @@
+:root {
+  --azul: #1b3a6b; --azul2: #2d5aa0; --fundo: #f2f4f8; --cartao: #fff; --borda: #cfd6e2; --texto: #1c2430; --suave: #5b6778;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fundo: #11161d; --cartao: #1a212b; --borda: #2c3644; --texto: #e8edf4; --suave: #9aa6b8; }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding-bottom: 40px; }
+.topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px; background: var(--azul); color: #fff; padding: 10px 16px; padding-top: calc(10px + env(safe-area-inset-top)); }
+.topo img { background: #fff; border-radius: 6px; padding: 2px; }
+.topo h1 { font-size: 1.1rem; margin: 0; font-weight: 600; }
+main { max-width: 640px; margin: 0 auto; padding: 12px 16px; }
+.cartao { background: var(--cartao); border: 1px solid var(--borda); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+.cartao h2 { font-size: 1rem; margin: 0 0 10px; color: var(--azul2); text-transform: uppercase; letter-spacing: .03em; }
+summary { cursor: pointer; font-weight: 600; }
+summary small { font-weight: 400; color: var(--suave); margin-left: 6px; }
+details.sub { margin-top: 8px; }
+label { display: block; font-size: .85rem; color: var(--suave); margin: 10px 0 0; }
+input, select, textarea { display: block; width: 100%; margin-top: 4px; padding: 11px 12px; font: inherit; color: var(--texto); background: var(--fundo); border: 1px solid var(--borda); border-radius: 8px; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--azul2); border-color: transparent; }
+textarea { resize: vertical; }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tres { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.tres .g2 { grid-column: span 2; }
+button { font: inherit; border-radius: 10px; padding: 12px 16px; border: 1px solid var(--borda); cursor: pointer; }
+button.prim { background: var(--azul); color: #fff; border-color: var(--azul); font-weight: 600; }
+button.sec { background: var(--cartao); color: var(--texto); }
+button.perigo { color: #b3261e; }
+button:active { transform: translateY(1px); }
+.acoes { display: flex; gap: 10px; margin: 6px 0 14px; }
+.acoes button { flex: 1; }
+.acoes.col { flex-direction: column; }
+.objeto { border: 1px dashed var(--borda); border-radius: 10px; padding: 10px; margin-bottom: 10px; }
+.objeto header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+.objeto header button { padding: 6px 10px; font-size: .85rem; }
+.rubrica { margin-top: 12px; }
+.rubrica > span { display: block; font-size: .85rem; color: var(--suave); margin-bottom: 4px; }
+.pad { display: block; width: 100%; aspect-ratio: 94 / 32; background: #fff; border: 2px solid var(--borda); border-radius: 10px; touch-action: none; cursor: crosshair; }
+.linha { display: flex; gap: 8px; margin-top: 8px; }
+.linha button { flex: 1; padding: 9px; }
+.aviso { margin: 0 0 4px; padding: 8px 10px; background: #fff4d6; color: #5b4300; border-radius: 8px; font-size: .9rem; }
+.rodape { text-align: center; font-size: .8rem; color: var(--suave); }
+small { color: var(--suave); }
+
+/* prévia do termo (fonte e justificação parecidas com o modelo oficial) */
+.previa { background: #fff; color: #000; border: 1px solid var(--borda); padding: 12px; font: 12.5px/1.4 Tahoma, Verdana, sans-serif; text-align: justify; overflow-wrap: anywhere; }
+.previa .inst { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.previa .inst img { width: 40px; height: 40px; }
+.previa .inst b { display: block; }
+.previa .tit { text-align: center; font-weight: bold; font-size: 14px; margin: 12px 0; }
+.previa p { margin: 0 0 8px; }
+.previa .campo b { font-weight: bold; }
+.previa .obj { font-weight: bold; margin-top: 10px; }
+.previa .caixa { border: 1px solid #000; padding: 3px 4px; margin-top: 12px; }
+.previa .ass { margin-top: 12px; font-size: 12px; text-align: center; }
+
+#toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(120px); background: #222; color: #fff; padding: 10px 16px; border-radius: 10px; opacity: 0; transition: .25s; z-index: 20; max-width: 90%; text-align: center; }
+#toast.on { transform: translateX(-50%); opacity: 1; }
+[hidden] { display: none !important; }

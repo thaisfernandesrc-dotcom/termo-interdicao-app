@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1b3a6b">
+  <title>Termo de Interdição</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topo"><img src="assets/brasao.png" alt="" width="32" height="32"><h1>Termo de Interdição</h1></header>
+
+  <!-- ETAPA 1: dados do termo -->
+  <main id="etapa1">
+    <details class="cartao" id="perfilBox">
+      <summary>Meus dados (AFT e unidade) <small>preencha uma vez</small></summary>
+      <form id="perfilForm" autocomplete="off">
+        <label>Nome do Auditor-Fiscal<input name="aftNome"></label>
+        <label>CIF<input name="aftCif" inputmode="numeric" placeholder="00000-0"></label>
+        <label>Superintendência (linha do cabeçalho)<input name="unidade1" placeholder="Superintendência Regional do Trabalho e Emprego/UF"></label>
+        <label>Gerência (linha do cabeçalho)<input name="unidade2" placeholder="Gerência Regional do Trabalho em ..."></label>
+        <label>Local do termo (cidade - UF)<input name="localData" placeholder="Rio de Janeiro - RJ"></label>
+        <label>Endereço para protocolo (opcional)<textarea name="protocolo" rows="2" placeholder="Aparece no parágrafo &quot;Podem, ainda, ser protocolizados no seguinte endereço&quot;"></textarea></label>
+        <div class="rubrica">
+          <span>Minha rubrica (opcional)</span>
+          <canvas id="padAft" class="pad"></canvas>
+          <div class="linha"><button type="button" id="aftLimpar" class="sec">Limpar</button><button type="button" id="aftSalvar" class="sec">Salvar rubrica</button></div>
+          <small id="aftRubricaInfo"></small>
+        </div>
+        <button type="submit" class="sec">Salvar meus dados</button>
+      </form>
+    </details>
+
+    <form id="termoForm" class="cartao" autocomplete="off">
+      <h2>Empregador</h2>
+      <label>Nº do Termo<input name="numero" inputmode="numeric" placeholder="4.202.168-5"></label>
+      <label>Empregador<input name="empregador" required></label>
+      <div class="duas">
+        <label>CNPJ<input name="cnpj" inputmode="numeric" placeholder="00.000.000/0000-00"></label>
+        <label>CNAE<input name="cnae" inputmode="numeric" placeholder="0000-0/00"></label>
+      </div>
+      <label>Endereço<input name="endereco"></label>
+      <div class="tres">
+        <label class="g2">Município<input name="municipio"></label>
+        <label>UF<input name="uf" maxlength="2" style="text-transform:uppercase"></label>
+      </div>
+      <label>CEP<input name="cep" inputmode="numeric" placeholder="00.000-000"></label>
+      <label>Nome de Fantasia<input name="fantasia"></label>
+      <label>Data do termo<input type="date" name="data"></label>
+
+      <details class="sub">
+        <summary>Códigos do Sistema Auditor (opcional)</summary>
+        <label>Aut.<input name="aut"></label>
+        <label>Cód. Download<input name="codDownload"></label>
+      </details>
+    </form>
+
+    <section class="cartao">
+      <h2>Objetos da interdição</h2>
+      <div id="listaObjetos"></div>
+      <button type="button" id="addObjeto" class="sec">+ Adicionar objeto</button>
+    </section>
+
+    <div class="acoes">
+      <button type="button" id="limparTudo" class="sec">Novo termo</button>
+      <button type="button" id="gerar" class="prim">Gerar</button>
+    </div>
+    <p class="rodape">Os dados ficam somente neste aparelho. Nada é enviado a servidor.</p>
+  </main>
+
+  <!-- ETAPA 2: conferência e assinatura do empregador -->
+  <main id="etapa2" hidden>
+    <section class="cartao">
+      <h2>Conferência</h2>
+      <div id="previa" class="previa"></div>
+    </section>
+
+    <section class="cartao">
+      <h2>Recibo do empregador</h2>
+      <p class="aviso">Entregue o celular ao empregador ou preposto.</p>
+      <form id="reciboForm" autocomplete="off">
+        <label>Recebi em<input type="date" name="recebiEm"></label>
+        <label>Nome<input name="empNome"></label>
+        <div class="duas">
+          <label>Ident.<input name="empIdent"></label>
+          <label>CPF<input name="empCpf" inputmode="numeric" placeholder="000.000.000-00"></label>
+        </div>
+        <label>Função<input name="empFuncao"></label>
+      </form>
+      <div class="rubrica">
+        <span>Assinatura / rubrica do empregador</span>
+        <canvas id="padEmp" class="pad"></canvas>
+        <div class="linha"><button type="button" id="empLimpar" class="sec">Limpar</button></div>
+      </div>
+    </section>
+
+    <div class="acoes">
+      <button type="button" id="voltar" class="sec">Voltar</button>
+      <button type="button" id="gerarPdf" class="prim">Gerar PDF</button>
+    </div>
+
+    <section id="resultado" class="cartao" hidden>
+      <h2>PDF pronto</h2>
+      <p id="resNome"></p>
+      <div class="acoes col">
+        <button type="button" id="compartilhar" class="prim">Compartilhar</button>
+        <button type="button" id="baixar" class="sec">Baixar</button>
+        <button type="button" id="abrir" class="sec">Abrir</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/JsBarcode.all.min.js"></script>
+  <script src="js/texto.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
