@@ -41,6 +41,34 @@
     });
   }
 
+  // Recorta a rubrica pelo traço (tira o espaço vazio do quadro) para poder centralizá-la na linha.
+  async function recortar(dataUrl) {
+    if (!dataUrl) return null;
+    try {
+      const im = await carregarImagem(dataUrl);
+      const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+      const g = c.getContext('2d'); g.drawImage(im, 0, 0);
+      const px = g.getImageData(0, 0, c.width, c.height).data;
+      let x0 = c.width, y0 = c.height, x1 = -1, y1 = -1;
+      for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+        if (px[(y * c.width + x) * 4 + 3] > 20) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+      }
+      if (x1 < 0) return null;
+      const m = 4; x0 = Math.max(0, x0 - m); y0 = Math.max(0, y0 - m); x1 = Math.min(c.width - 1, x1 + m); y1 = Math.min(c.height - 1, y1 + m);
+      const o = document.createElement('canvas'); o.width = x1 - x0 + 1; o.height = y1 - y0 + 1;
+      o.getContext('2d').drawImage(c, x0, y0, o.width, o.height, 0, 0, o.width, o.height);
+      return { url: o.toDataURL('image/png'), w: o.width, h: o.height };
+    } catch (e) { return null; }
+  }
+
+  // Coloca a rubrica centralizada em cx, apoiada na linha (base = y), dentro de maxW x maxH.
+  function rubrica(doc, r, cx, base, maxW, maxH) {
+    if (!r) return;
+    const k = Math.min(maxW / r.w, maxH / r.h);
+    const w = r.w * k, h = r.h * k;
+    doc.addImage(r.url, 'PNG', cx - w / 2, base - h, w, h);
+  }
+
   async function gerarPDF(d) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
@@ -146,8 +174,8 @@
     marcaDagua('CIF ' + (d.aftCif || ''), 281, oy + 44, 14);
     fonte(doc, false, BODY);
     doc.text((d.localData ? d.localData + ', ' : '') + (d.data || '') + '.', 275, oy);
-    // assinatura do AFT (opcional) e linha
-    if (d.aftRubrica) doc.addImage(d.aftRubrica, 'PNG', 440, oy - 2, 75, 25.5);
+    // assinatura do AFT (opcional), centralizada sobre a linha
+    rubrica(doc, await recortar(d.aftRubrica), 403.5, oy + 21, 130, 20);
     doc.setLineWidth(0.8); doc.setDrawColor(0);
     doc.line(290, oy + 23, 517, oy + 23);
     doc.text(d.aftNome || '', 403.5, oy + 34, { align: 'center' });
@@ -157,7 +185,7 @@
     // recibo do empregador
     doc.text('Recebi em:', MX, oy + 50);
     doc.text(d.recebiEm || '____/_____/______', 134, oy + 50);
-    if (d.empAssinatura) doc.addImage(d.empAssinatura, 'PNG', 196, oy + 36, 94, 32);
+    rubrica(doc, await recortar(d.empAssinatura), 174, oy + 67, 120, 32); // centro da linha (77..271)
     doc.line(77, oy + 69, 271, oy + 69);
     doc.text('Assinatura do Empregador/Preposto:', 97, oy + 82);
 
