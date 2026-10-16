@@ -1,9 +1,9 @@
 // Service worker: deixa o app funcionar sem internet depois da primeira visita.
-const VERSAO = 'ti-v4';
+const VERSAO = 'ti-v5';
 const ARQUIVOS = [
   './', 'index.html', 'css/style.css', 'js/texto.js', 'js/pdf.js', 'js/app.js',
   'vendor/jspdf.umd.min.js', 'vendor/JsBarcode.all.min.js',
-  'assets/brasao.png', 'assets/icon-192.png', 'assets/icon-512.png', 'manifest.webmanifest',
+  'assets/brasao.png', 'assets/icon-180.png', 'assets/icon-192.png', 'assets/icon-512.png', 'manifest.webmanifest',
 ];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(VERSAO).then((c) => c.addAll(ARQUIVOS)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {
